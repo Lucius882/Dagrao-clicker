@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class CookieClickerComAba extends JFrame {
+public class Dagrao_clicker extends JFrame {
 
     private int pontos = 0;
     private int multiplicador = 1;
@@ -21,7 +21,7 @@ public class CookieClickerComAba extends JFrame {
     private int frameHeight;
     private int escala = 6;
 
-    public CookieClickerComAba() {
+    public Dagrao_clicker() {
         super("Cookie Clicker com Abas");
         carregarSprites();
 
@@ -159,7 +159,7 @@ public class CookieClickerComAba extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            CookieClickerComAba jogo = new CookieClickerComAba();
+            Dagrao_clicker jogo = new Dagrao_clicker();
             jogo.setExtendedState(JFrame.MAXIMIZED_BOTH);
             jogo.setUndecorated(true);
             jogo.setVisible(true);
