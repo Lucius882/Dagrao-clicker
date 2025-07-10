@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class CookieClickerComAba extends JFrame {
 
@@ -13,8 +16,17 @@ public class CookieClickerComAba extends JFrame {
     private JLabel labelUpgradeInfo;
     private JButton botaoComprarUpgrade;
 
+    private ImageIcon[] frames;
+    private int frameWidth;
+    private int frameHeight;
+    private int escala = 6;
+
     public CookieClickerComAba() {
         super("Cookie Clicker com Abas");
+        carregarSprites();
+
+        int larguraBotao = frameWidth * escala;
+        int alturaBotao = frameHeight * escala;
 
         JTabbedPane abas = new JTabbedPane();
 
@@ -26,22 +38,13 @@ public class CookieClickerComAba extends JFrame {
         labelPontos.setBounds(50, 20, 500, 50);
         painelJogo.add(labelPontos);
 
-        botaoCookie = new JButton("🍪") {
-            @Override
-            protected void paintComponent(Graphics g) {
-                if (getModel().isPressed()) {
-                    g.translate(1, 1);
-                }
-                super.paintComponent(g);
-            }
-        };
-        botaoCookie.setFont(new Font("SansSerif", Font.PLAIN, 100));
-        botaoCookie.setFocusPainted(false);
+        botaoCookie = new JButton(frames[0]);
+        botaoCookie.setMargin(new Insets(0, 0, 0, 0));
+        botaoCookie.setBorderPainted(false);
         botaoCookie.setContentAreaFilled(false);
-        botaoCookie.setOpaque(true);
-        botaoCookie.setBackground(new Color(255, 240, 200));
-        botaoCookie.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 3, true));
-        botaoCookie.setBounds(200, 150, 200, 200);
+        botaoCookie.setFocusPainted(false);
+        botaoCookie.setOpaque(false);
+        botaoCookie.setBounds(200, 150, larguraBotao, alturaBotao);
 
         botaoCookie.addActionListener(e -> {
             pontos += multiplicador;
@@ -50,6 +53,8 @@ public class CookieClickerComAba extends JFrame {
         });
 
         painelJogo.add(botaoCookie);
+
+        iniciarAnimacaoSprite();
 
         JPanel painelUpgrades = new JPanel();
         painelUpgrades.setLayout(new BoxLayout(painelUpgrades, BoxLayout.Y_AXIS));
@@ -69,7 +74,6 @@ public class CookieClickerComAba extends JFrame {
                 multiplicador++;
                 atualizarPontuacao();
                 labelUpgradeInfo.setText("Multiplicador atual: x" + multiplicador);
-                botaoComprarUpgrade.setText("Comprar Upgrade (" + (10) + " pontos)");
             } else {
                 JOptionPane.showMessageDialog(this, "Você precisa de pelo menos 10 pontos!", "Sem pontos", JOptionPane.WARNING_MESSAGE);
             }
@@ -85,12 +89,10 @@ public class CookieClickerComAba extends JFrame {
         add(abas);
     }
 
-    // Atualiza a label de pontuação
     private void atualizarPontuacao() {
         labelPontos.setText("Pontos: " + pontos);
     }
 
-    // Animação de balanço
     private void balancarBotao(JButton botao) {
         final Point localOriginal = botao.getLocation();
         final int deslocamento = 1;
@@ -118,13 +120,48 @@ public class CookieClickerComAba extends JFrame {
         timer.start();
     }
 
+    private void carregarSprites() {
+        try {
+            File imagem = new File("imgs/ovo_dagrao.png");
+            if (!imagem.exists()) {
+                System.out.println("Arquivo não encontrado: " + imagem.getAbsolutePath());
+                return;
+            }
+
+            BufferedImage spriteSheet = javax.imageio.ImageIO.read(imagem);
+            frameWidth = spriteSheet.getWidth() / 2;
+            frameHeight = spriteSheet.getHeight();
+
+            frames = new ImageIcon[2];
+            for (int i = 0; i < 2; i++) {
+                BufferedImage frame = spriteSheet.getSubimage(i * frameWidth, 0, frameWidth, frameHeight);
+                Image imgEscalada = frame.getScaledInstance(frameWidth * escala, frameHeight * escala, Image.SCALE_SMOOTH);
+                frames[i] = new ImageIcon(imgEscalada);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void iniciarAnimacaoSprite() {
+        Timer animacao = new Timer(300, new ActionListener() {
+            int index = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                botaoCookie.setIcon(frames[index]);
+                index = (index + 1) % frames.length;
+            }
+        });
+        animacao.start();
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             CookieClickerComAba jogo = new CookieClickerComAba();
-
             jogo.setExtendedState(JFrame.MAXIMIZED_BOTH);
             jogo.setUndecorated(true);
-
             jogo.setVisible(true);
         });
     }
