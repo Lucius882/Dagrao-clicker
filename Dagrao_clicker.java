@@ -4,89 +4,108 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import javax.imageio.ImageIO;
 
-public class Dagrao_clicker extends JFrame {
-
+public class DagraoClicker extends JFrame {
     private int pontos = 0;
     private int multiplicador = 1;
+    private int autoClickers = 0;
 
     private JLabel labelPontos;
-    private JButton botaoCookie;
+    private JButton botaoDragao;
 
-    private JLabel labelUpgradeInfo;
-    private JButton botaoComprarUpgrade;
+    private JPanel painelMelhoriasCompradas;
+    private Timer autoClickTimer;
 
     private ImageIcon[] frames;
-    private int frameWidth;
-    private int frameHeight;
+    private int frameWidth, frameHeight;
     private int escala = 6;
 
-    public Dagrao_clicker() {
-        super("Cookie Clicker com Abas");
+    public DagraoClicker() {
+        super("Dagrão Clicker");
+
         carregarSprites();
 
-        int larguraBotao = frameWidth * escala;
-        int alturaBotao = frameHeight * escala;
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(true);
 
-        JTabbedPane abas = new JTabbedPane();
+        // Painel Principal
+        JPanel painelPrincipal = new JPanel(new BorderLayout());
 
-        JPanel painelJogo = new JPanel(null);
-        painelJogo.setBackground(new Color(240, 230, 200));
+        // PAINEL ESQUERDA - Dragão e Pontos
+        JPanel painelEsquerda = new JPanel();
+        painelEsquerda.setLayout(new BoxLayout(painelEsquerda, BoxLayout.Y_AXIS));
+        painelEsquerda.setBackground(new Color(240, 230, 200));
+        painelEsquerda.setPreferredSize(new Dimension(350, getHeight()));
 
         labelPontos = new JLabel("Pontos: 0", SwingConstants.CENTER);
         labelPontos.setFont(new Font("Arial", Font.BOLD, 32));
-        labelPontos.setBounds(50, 20, 500, 50);
-        painelJogo.add(labelPontos);
+        labelPontos.setAlignmentX(Component.CENTER_ALIGNMENT);
+        painelEsquerda.add(Box.createRigidArea(new Dimension(0, 30)));
+        painelEsquerda.add(labelPontos);
 
-        botaoCookie = new JButton(frames[0]);
-        botaoCookie.setMargin(new Insets(0, 0, 0, 0));
-        botaoCookie.setBorderPainted(false);
-        botaoCookie.setContentAreaFilled(false);
-        botaoCookie.setFocusPainted(false);
-        botaoCookie.setOpaque(false);
-        botaoCookie.setBounds(200, 150, larguraBotao, alturaBotao);
-
-        botaoCookie.addActionListener(e -> {
+        botaoDragao = new JButton(frames[0]);
+        botaoDragao.setBorderPainted(false);
+        botaoDragao.setContentAreaFilled(false);
+        botaoDragao.setFocusPainted(false);
+        botaoDragao.setOpaque(false);
+        botaoDragao.setAlignmentX(Component.CENTER_ALIGNMENT);
+        botaoDragao.addActionListener(e -> {
             pontos += multiplicador;
             atualizarPontuacao();
-            balancarBotao(botaoCookie);
+            balancarBotao(botaoDragao);
         });
+        painelEsquerda.add(Box.createRigidArea(new Dimension(0, 50)));
+        painelEsquerda.add(botaoDragao);
 
-        painelJogo.add(botaoCookie);
+        painelPrincipal.add(painelEsquerda, BorderLayout.WEST);
 
-        iniciarAnimacaoSprite();
+        // PAINEL CENTRAL - Melhorias compradas
+        painelMelhoriasCompradas = new JPanel();
+        painelMelhoriasCompradas.setLayout(new BoxLayout(painelMelhoriasCompradas, BoxLayout.Y_AXIS));
+        painelMelhoriasCompradas.setBackground(new Color(250, 245, 230));
+        JScrollPane scrollCentro = new JScrollPane(painelMelhoriasCompradas);
+        painelPrincipal.add(scrollCentro, BorderLayout.CENTER);
 
-        JPanel painelUpgrades = new JPanel();
-        painelUpgrades.setLayout(new BoxLayout(painelUpgrades, BoxLayout.Y_AXIS));
-        painelUpgrades.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        painelUpgrades.setBackground(new Color(220, 220, 220));
+        // PAINEL DIREITA - Loja
+        JPanel painelLoja = new JPanel();
+        painelLoja.setLayout(new BoxLayout(painelLoja, BoxLayout.Y_AXIS));
+        painelLoja.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        painelLoja.setBackground(new Color(220, 220, 220));
+        painelLoja.setPreferredSize(new Dimension(300, getHeight()));
 
-        labelUpgradeInfo = new JLabel("Multiplicador atual: x1");
-        labelUpgradeInfo.setFont(new Font("Arial", Font.PLAIN, 18));
-        labelUpgradeInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel labelLoja = new JLabel("Loja");
+        labelLoja.setFont(new Font("Arial", Font.BOLD, 24));
+        labelLoja.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        botaoComprarUpgrade = new JButton("Comprar Upgrade (10 pontos)");
-        botaoComprarUpgrade.setAlignmentX(Component.CENTER_ALIGNMENT);
-        botaoComprarUpgrade.setFont(new Font("Arial", Font.BOLD, 16));
-        botaoComprarUpgrade.addActionListener(e -> {
-            if (pontos >= 10) {
-                pontos -= 10;
-                multiplicador++;
+        JButton botaoCursor = new JButton("Comprar Cursor (15 pontos)");
+        botaoCursor.setAlignmentX(Component.CENTER_ALIGNMENT);
+        botaoCursor.setIcon(new ImageIcon("imgs/cursor.png")); // Substitua pelo seu ícone
+        botaoCursor.addActionListener(e -> {
+            if (pontos >= 15) {
+                pontos -= 15;
+                autoClickers++;
                 atualizarPontuacao();
-                labelUpgradeInfo.setText("Multiplicador atual: x" + multiplicador);
+                painelMelhoriasCompradas.add(new JLabel("Cursor adquirido #" + autoClickers, new ImageIcon("imgs/cursor.png"), JLabel.LEFT));
+                painelMelhoriasCompradas.revalidate();
+                painelMelhoriasCompradas.repaint();
             } else {
-                JOptionPane.showMessageDialog(this, "Você precisa de pelo menos 10 pontos!", "Sem pontos", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Você precisa de pelo menos 15 pontos!", "Sem pontos", JOptionPane.WARNING_MESSAGE);
             }
         });
 
-        painelUpgrades.add(labelUpgradeInfo);
-        painelUpgrades.add(Box.createRigidArea(new Dimension(0, 20)));
-        painelUpgrades.add(botaoComprarUpgrade);
+        painelLoja.add(labelLoja);
+        painelLoja.add(Box.createRigidArea(new Dimension(0, 20)));
+        painelLoja.add(botaoCursor);
+        painelPrincipal.add(painelLoja, BorderLayout.EAST);
 
-        abas.addTab("Jogo", painelJogo);
-        abas.addTab("Upgrades", painelUpgrades);
+        // Adiciona painel principal à janela
+        add(painelPrincipal);
 
-        add(abas);
+        iniciarAnimacaoSprite();
+        iniciarAutoClick();
     }
 
     private void atualizarPontuacao() {
@@ -95,7 +114,7 @@ public class Dagrao_clicker extends JFrame {
 
     private void balancarBotao(JButton botao) {
         final Point localOriginal = botao.getLocation();
-        final int deslocamento = 1;
+        final int deslocamento = 2;
         final int duracao = 100;
         final int passos = 10;
 
@@ -120,6 +139,16 @@ public class Dagrao_clicker extends JFrame {
         timer.start();
     }
 
+    private void iniciarAutoClick() {
+        autoClickTimer = new Timer(1000, e -> {
+            if (autoClickers > 0) {
+                pontos += autoClickers;
+                atualizarPontuacao();
+            }
+        });
+        autoClickTimer.start();
+    }
+
     private void carregarSprites() {
         try {
             File imagem = new File("imgs/ovo_dagrao.png");
@@ -128,7 +157,7 @@ public class Dagrao_clicker extends JFrame {
                 return;
             }
 
-            BufferedImage spriteSheet = javax.imageio.ImageIO.read(imagem);
+            BufferedImage spriteSheet = ImageIO.read(imagem);
             frameWidth = spriteSheet.getWidth() / 2;
             frameHeight = spriteSheet.getHeight();
 
@@ -138,7 +167,6 @@ public class Dagrao_clicker extends JFrame {
                 Image imgEscalada = frame.getScaledInstance(frameWidth * escala, frameHeight * escala, Image.SCALE_SMOOTH);
                 frames[i] = new ImageIcon(imgEscalada);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -150,7 +178,7 @@ public class Dagrao_clicker extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                botaoCookie.setIcon(frames[index]);
+                botaoDragao.setIcon(frames[index]);
                 index = (index + 1) % frames.length;
             }
         });
@@ -159,9 +187,7 @@ public class Dagrao_clicker extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Dagrao_clicker jogo = new Dagrao_clicker();
-            jogo.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            jogo.setUndecorated(true);
+            DagraoClicker jogo = new DagraoClicker();
             jogo.setVisible(true);
         });
     }
