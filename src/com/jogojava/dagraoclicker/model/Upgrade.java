@@ -1,4 +1,4 @@
-package com.seuprojeto.dagraoclicker.model;
+package com.jogojava.dagraoclicker.model;
 
 public enum Upgrade {
     // Nome no Enum("Nome para Exibição", custoInicial, bonusCps, caminhoDaImagem)
