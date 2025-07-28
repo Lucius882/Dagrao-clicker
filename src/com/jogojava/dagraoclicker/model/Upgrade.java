@@ -1,13 +1,13 @@
 package com.jogojava.dagraoclicker.model;
 
 public enum Upgrade {
-    // Nome no Enum("Nome para Exibição", custoInicial, bonusCps, caminhoDaImagem)
-    ESPADA("Espada", 20, 0.1, "imgs/espada.png"), // Corrigido
-    GUERREIRO("Guerreiro", 150, 1, "imgs/guerreiro.png"), // Corrigido
-    ARQUEIRO("Arqueiro", 1000, 10, "imgs/arquero.jpg"),
-    BRUXA("Bruxa", 12000, 100, "imgs/bruxa.jpg"),
-    GIGANTE_DE_MADEIRA("Gigante de Madeira", 150000, 1000, "imgs/arvere_somos_nois.jpg"),
-    O_ESCOLHIDO("O Escolhido", 2000000, 10000, "imgs/oEscolhido.jpg");
+    // Enum("Nome de Exibição", custo, bônus de CPS, "caminho/exato/da/imagem.extensão")
+    ESPADA("Espada", 20, 0.1, "imgs/espada.png"),
+    GUERREIRO("Guerreiro", 150, 1, "imgs/guerreiro.png"),
+    ARQUEIRO("Arqueiro", 1000, 10, "imgs/arquero.png"),
+    BRUXA("Bruxa", 12000, 100, "imgs/bruxa.png"),
+    GIGANTE_DE_MADEIRA("Gigante de Madeira", 150000, 1000, "imgs/arvere_somos_nois.png"),
+    O_ESCOLHIDO("O Escolhido", 2000000, 10000, "imgs/oEscolhido.png");
 
     private final String nome;
     private final int custo;
