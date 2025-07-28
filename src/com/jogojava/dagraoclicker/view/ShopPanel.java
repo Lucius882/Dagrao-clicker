@@ -1,6 +1,7 @@
 package com.jogojava.dagraoclicker.view;
 
 import com.jogojava.dagraoclicker.model.Upgrade;
+import com.jogojava.dagraoclicker.utils.ImageUtils; // Importa a nova classe
 import javax.swing.*;
 import java.awt.*;
 import java.util.EnumMap;
@@ -32,13 +33,16 @@ public class ShopPanel extends JPanel {
     }
 
     private JButton createUpgradeButton(Upgrade upgrade) {
-        ImageIcon icon = new ImageIcon(new ImageIcon(upgrade.getImagePath()).getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
-        String text = String.format("<html><b>%s</b><br>Custo: %d | CPS: %.1f</html>",
+        // Usa o ImageUtils para carregar o ícone
+        ImageIcon icon = ImageUtils.loadIcon(upgrade.getImagePath(), 40, 40);
+        
+        String text = String.format("<html><body style='text-align: left; padding-left: 10px;'><b>%s</b><br>Custo: %d | CPS: %.1f</body></html>",
                 upgrade.getNome(), upgrade.getCusto(), upgrade.getBonusCps());
 
         JButton button = new JButton(text);
         button.setIcon(icon);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        button.setHorizontalAlignment(SwingConstants.LEFT); // Alinha texto e ícone à esquerda
         button.setMaximumSize(new Dimension(300, 80));
         button.setPreferredSize(new Dimension(300, 80));
         button.setFocusPainted(false);
