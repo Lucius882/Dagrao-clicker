@@ -13,7 +13,7 @@ public class ClickerPanel extends JPanel {
     private JButton botaoDragao;
 
     private ImageIcon[] frames;
-    private int escala = 6;
+    private int escala = 12;
     private Image backgroundImage; // Imagem de fundo
 
     public ClickerPanel() {
@@ -38,7 +38,7 @@ public class ClickerPanel extends JPanel {
         botaoDragao.setOpaque(false);
         botaoDragao.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        add(Box.createRigidArea(new Dimension(0, 50)));
+        add(Box.createRigidArea(new Dimension(0, 350)));
         add(botaoDragao);
 
         iniciarAnimacaoSprite();

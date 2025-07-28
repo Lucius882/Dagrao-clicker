@@ -36,7 +36,7 @@ public class ShopPanel extends JPanel {
         // Usa o ImageUtils para carregar o ícone
         ImageIcon icon = ImageUtils.loadIcon(upgrade.getImagePath(), 40, 40);
         
-        String text = String.format("<html><body style='text-align: left; padding-left: 10px;'><b>%s</b><br>Custo: %d | CPS: %.1f</body></html>",
+        String text = String.format(upgrade.getBonusCps() >= 1 ? "<html><body style='text-align: left; padding-left: 10px;'><b>%s</b><br>Custo: %d | CPS: %.0f</body></html>": "<html><body style='text-align: left; padding-left: 10px;'><b>%s</b><br>Custo: %d | CPS: %.1f</body></html>",
                 upgrade.getNome(), upgrade.getCusto(), upgrade.getBonusCps());
 
         JButton button = new JButton(text);
